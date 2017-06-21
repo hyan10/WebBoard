@@ -76,11 +76,19 @@ select * from t_board_file
 
 
 
+select *
+from (
+	select rownum r, s.title, s.writer, s.content, s.view_cnt, s.reg_date
+	from 
+		(select *
+		from t_board
+		order by reg_date desc) s 
+	where rownum<6) a
+where a.r>3
 
 
 
 
 
-
-
+select *  from (select rownum r, s.title, s.writer, s.content, s.view_cnt, s.reg_date         from (select * from t_board order by reg_date desc) s         where rownum<=6) a  where a.r>3
 

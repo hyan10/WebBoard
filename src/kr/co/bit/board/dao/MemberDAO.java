@@ -74,7 +74,7 @@ public class MemberDAO {
 	}
 
 	public MemberVO getMember(String id) {
-		MemberVO result = new MemberVO();
+		MemberVO result = null;
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * from t_member where id=?");
@@ -86,6 +86,7 @@ public class MemberDAO {
 			ResultSet rs = st.executeQuery();
 
 			if (rs.next()) {
+				result = new MemberVO();
 				result.setId(rs.getString("id"));
 				result.setName(rs.getString("name"));
 				result.setTel1(rs.getString("tel1"));
@@ -96,11 +97,15 @@ public class MemberDAO {
 				result.setBasic_addr(rs.getString("basic_addr"));
 				result.setDetail_addr(rs.getString("detail_addr"));
 				result.setReg_date(rs.getString("reg_date"));
+				
+				System.out.println(result);
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+	//	System.out.println(result);
 
 		return result;
 	}
@@ -185,5 +190,13 @@ public class MemberDAO {
 
 		return result;
 
+	}
+	
+	public boolean checkID(String id){
+		boolean result = false;
+		
+		
+		
+		return result;
 	}
 }

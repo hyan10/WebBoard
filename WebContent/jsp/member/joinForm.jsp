@@ -4,7 +4,9 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>회원 가입</title>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script src="/Lecture-Web/js/httpRequest.js"></script>
 <script>
 	function check() {
 		var form = document.joinForm;
@@ -49,6 +51,58 @@
 	function back() {
 		location = "../board/list.jsp";
 	}
+	
+	function checkId(){
+		$.ajax({
+			url: "checkId.jsp",
+			type: "post",
+			data: {"id":$('#id').val()},
+			success: callbackId
+		});
+	}
+	
+	function checkPw(){
+		$.ajax({
+			url: "checkPw.jsp",
+			type: "post",
+			data: {"pw1":$("#pw1").val()},
+			success: callbackPw
+		})
+	}
+	
+	function checkPws(){
+		$.ajax({
+			url: "checkPw.jsp",
+			type: "post",
+			data: {"pw1":$('#pw1').val(), "pw2":$('#pw2').val()},
+			success: callbackPw
+		});
+	}
+	
+	function callbackId(data){
+		var json = JSON.parse(data);
+		console.log(json.msg);
+		$('#check_id').text(json.msg);
+		
+		if(json.result=="true"){
+			$('#check_id').css("color","blue");
+		}else{
+			$('#check_id').css("color","red");
+		}
+	}
+	
+	function callbackPw(data){
+		var json = JSON.parse(data);
+		console.log(json.msg);
+		$('#check_pw').text(json.msg);
+		
+		if(json.result=="true"){
+			$('#check_pw').css("color","blue");
+		}else{
+			$('#check_pw').css("color","red");
+		}
+	}
+	
 </script>
 <link rel="stylesheet" href="/Mission-Web/css/layout.css" />
 <link rel="stylesheet" href="/Mission-Web/css/board.css" />
@@ -69,10 +123,15 @@
 		<form action="join.jsp" method="post" name="joinForm"
 			onsubmit="return check()">
 
-			아이디: <input type="text" name="id" /><br />
+			아이디: <input id="id" type="text" name="id" />
+			<input type="button" onclick="checkId()" value="중복 체크"/><br/>
+			<span id="check_id"></span>
+			<br/>
 			<br /> 이름: <input type="text" name="name" /><br />
-			<br /> 비밀번호: <input type="password" name="pw" /><br />
-			<br /> 이메일: <input type="text" name="email_id" />@ <select
+			<br /> 비밀번호: <input id="pw1" type="password" name="pw" onkeyup="checkPw()"/><br />
+			<br/> 비밀번호 확인: <input id="pw2" type="password" name="pw2" onkeyup="checkPws()" /><br/>
+			<span id="check_pw"></span><br/>
+			<br /> 이메일: <input type="text" name="email_id" /> @ <select
 				name="email_domain">
 				<option value="">도메인 선택</option>
 				<option value="naver.com">naver.com</option>

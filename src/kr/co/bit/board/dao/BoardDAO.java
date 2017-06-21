@@ -65,8 +65,9 @@ public class BoardDAO {
 		return boards;
 	}
 
-	public List<BoardVO> selectAllBoard(int nextNo){ //, int size) {
+	public List<BoardVO> selectBoard(int nextPage){
 
+		int size = 5;
 		List<BoardVO> boards = new ArrayList<>();
 
 		Connection conn = null;
@@ -76,18 +77,24 @@ public class BoardDAO {
 			conn = new ConnectionFactory().getConnection();
 			StringBuilder sql = new StringBuilder();
 
-			int lastNo = nextNo + 3;
+			int nextNo = (nextPage-1)*size;
+			int lastNo = nextNo + size;
 
 	/*		if (lastNo < size) {
 				lastNo = size;
 			}*/
 
-			sql.append("select * from (select * from t_board order by reg_date desc) ");
-			sql.append(" where rownum>=? and rownum<=?");
+			sql.append("select * ");
+			sql.append(" from (select rownum r, s.no, s.title, s.writer, s.content, s.view_cnt, s.reg_date ");
+			sql.append("        from (select * from t_board order by reg_date desc) s ");
+			sql.append("        where rownum<=?) a ");
+			sql.append(" where a.r>?");
+			
+		//	System.out.println(sql);
 
 			st = conn.prepareStatement(sql.toString());
-			st.setInt(1, nextNo);
-			st.setInt(2, lastNo);
+			st.setInt(1, lastNo);
+			st.setInt(2, nextNo);
 			ResultSet rs = st.executeQuery();
 
 			while (rs.next()) {
@@ -104,6 +111,8 @@ public class BoardDAO {
 
 				boards.add(board);
 			}
+			
+		//	System.out.println(nextNo+", "+lastNo);
 
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -22,13 +22,16 @@
 */
 	
 	BoardDAO dao = new BoardDAO();
-	// List<BoardVO> list = dao.selectAllBoard();
+	List<BoardVO> listAll = dao.selectAllBoard();
 	
 	String nextNo = request.getParameter("nextNo");
-	List<BoardVO> pageList = dao.selectAllBoard(Integer.parseInt(nextNo!=null?nextNo:"0"));
+	List<BoardVO> pageList = dao.selectBoard(Integer.parseInt(nextNo!=null?nextNo:"1"));
 	
-	// pageContext.setAttribute("list", list);
+	System.out.println(pageList);
+	
+	pageContext.setAttribute("listAll", listAll);
 	pageContext.setAttribute("list", pageList);
+	pageContext.setAttribute("size", 5);
 	
 %>
 <!DOCTYPE html>
@@ -137,7 +140,9 @@
 			</tr>
 			<!-- (not empty param.nextNo)?(param.NextNo+2):2 -->
 			<!-- javascript:getList(${param.nextNo}) -->
-		<c:forEach var="board" begin="${(not empty param.nextNo)?param.nextNo:0}" end="${ 10 }" items="${list}" varStatus="loop">
+			<!-- begin="${(not empty param.nextNo)?param.nextNo:1}" end="${ 10 }" -->
+			
+		<c:forEach var="board"  items="${list}" varStatus="loop">
 			<tr <c:if test="${loop.index%2 == 1}">class="even"</c:if>>
 				<td>${board.no}</td>
 				<%-- title 내용에 태그가 있으면 수행되므로 el 표현식 권장 안함
@@ -155,15 +160,15 @@
 		</table>
 		<br/>
 		
-		<c:forEach var="i" begin="0" end="<%=pageList.size() %>" step="3">
-			<fmt:parseNumber var="page" value="${(i/3)+1}" integerOnly="true"/>
-			<a href="javascript:next(${i})">${page}</a>&nbsp;
+		<c:forEach var="i" begin="0" end="<%=listAll.size() %>" step="${size}">
+			<fmt:parseNumber var="page" value="${(i/size)+1}" integerOnly="true"/>
+			<a href="javascript:next(${page})">${page}</a>&nbsp;
 			<!-- href="list.jsp?nextNo=${i} -->
 		</c:forEach>
 		
 		<br/><br/>
 		
-		<c:if test="${not empty member }">
+		<c:if test="${not empty member}">
 			<input type="button" value="새글 등록" onclick="goWriteForm()"/>
 		</c:if>
 	</div>
